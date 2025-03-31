@@ -1,35 +1,39 @@
 aid: every-org
-name: Every.org
-description: >-
-  Use the Every.org Charity API to send donations to any charity, search
-  nonprofit data, and create innovative giving experiences. Our API is free for
-  non-commercial use cases, or you can contact us to explore for-profit
-  enterprise plans. 
-type: Index
-position: Consumer
-access: 3rd-Party
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
-tags:
-  - API
-created: '2025-03-01'
-modified: '2025-03-01'
 url: >-
   https://raw.githubusercontent.com/api-evangelist/every-org/refs/heads/main/apis.yml
-specificationVersion: '0.19'
 apis:
   - aid: every-org:every-org
-    name: Every.org
+    name: Every.org API
+    tags:
+      - API
+    humanURL: ' https://www.every.org'
+    properties:
+      - url: ' https://www.every.org'
+        type: Documentation
     description: >-
       Use the Every.org Charity API to send donations to any charity, search
       nonprofit data, and create innovative giving experiences. Our API is free
       for non-commercial use cases, or you can contact us to explore for-profit
       enterprise plans. 
-    humanURL: ' https://www.every.org'
-    tags:
-      - API
-    properties:
-      - type: Documentation
-        url: ' https://www.every.org'
+name: Every.org
+tags:
+  - API
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+access: 3rd-Party
+created: '2025-03-01'
+modified: '2025-03-30'
+position: Consumer
+description: >-
+  Every.org is a platform that empowers individuals to give back and support
+  causes they care about. Users can create fundraising campaigns, donate to
+  verified nonprofits, and track their impact through personalized giving
+  dashboards. Every.org also partners with companies to facilitate workplace
+  giving programs and corporate social responsibility initiatives. By connecting
+  donors with vetted organizations and providing transparency on where their
+  donations go, Every.org is revolutionizing the way people engage with
+  philanthropy and make a positive difference in the world.
 maintainers:
   - FN: Kin Lane
     email: info@apievangelist.com
+specificationVersion: '0.19'
