@@ -5,9 +5,9 @@ apis:
   - aid: every-org:every-org
     name: Every.org API
     tags:
+      - Charities
       - Donations
       - Fundraising
-      - Charities
     humanURL: ' https://www.every.org'
     properties:
       - url: ' https://www.every.org'
@@ -21,9 +21,9 @@ apis:
       online donations, and promote community engagement.
 name: Every.org
 tags:
+  - Charities
   - Donations
   - Fundraising
-  - Charities
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
