@@ -8,10 +8,15 @@ apis:
       - Charities
       - Donations
       - Fundraising
-    humanURL: ' https://www.every.org'
+    humanURL: https://www.every.org
+    baseURL: https://partners.every.org/v0.2
     properties:
-      - url: ' https://www.every.org'
+      - url: https://docs.every.org
         type: Documentation
+      - url: https://partners.every.org
+        type: Reference
+      - url: https://www.every.org
+        type: Website
     description: >-
       The Every.org API is a powerful tool that allows developers to access and interact
       with a wide range of charitable giving data. By integrating the API into their
