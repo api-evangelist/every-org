@@ -1,0 +1,13 @@
+{
+  "repo": "every-org",
+  "feeds": [
+    {
+      "source": "https://blog.every.org/",
+      "feed_url": "https://blog.every.org/rss/",
+      "saved": 10,
+      "title": "Every.org Blog"
+    }
+  ],
+  "post_count": 10,
+  "fetched": "2026-05-03T23:27:52Z"
+}
