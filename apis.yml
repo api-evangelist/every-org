@@ -46,6 +46,10 @@ maintainers:
     email: kin@apievangelist.com
 specificationVersion: '0.19'
 common:
+  - type: GitHubOrganization
+    url: https://github.com/everydotorg
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/everydotorg
   - name: Every.org
     description: 'null'
     url: https://support.every.org/hc/en-us
