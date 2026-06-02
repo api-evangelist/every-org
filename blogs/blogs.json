@@ -2,12 +2,20 @@
   "repo": "every-org",
   "feeds": [
     {
-      "source": "https://blog.every.org/",
+      "source": "https://blog.every.org/feed/",
       "feed_url": "https://blog.every.org/feed/",
-      "title": "Every.org Blog",
-      "saved": 12
+      "title": "",
+      "saved": 0,
+      "method": "feed"
+    },
+    {
+      "source": "https://blog.every.org/",
+      "feed_url": "https://blog.every.org/rss/",
+      "title": "",
+      "saved": 0,
+      "method": "discovered"
     }
   ],
   "post_count": 22,
-  "fetched": "2026-05-17T20:20:35Z"
+  "fetched": "2026-06-01T23:35:02Z"
 }
