@@ -1,0 +1,902 @@
+"""
+Every.org GraphQL Schema
+Platform for nonprofit discovery, charitable giving, and fund management.
+Covers 1.8M+ IRS-verified nonprofits, DAF funds, crypto/stock gifts,
+matching gifts, campaigns, disbursements, and donation widgets.
+"""
+
+# ─── Scalars ─────────────────────────────────────────────────────────────────
+
+scalar Date
+scalar DateTime
+scalar URL
+scalar EIN
+scalar Currency
+scalar JSON
+
+# ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum NonprofitSize {
+  MICRO
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
+}
+
+enum DonationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum DisbursementStatus {
+  SCHEDULED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  REVERSED
+}
+
+enum PaymentMethodType {
+  CARD
+  ACH
+  DAF
+  CRYPTO
+  STOCK
+  PAYPAL
+  BANK_TRANSFER
+}
+
+enum CryptoCurrencySymbol {
+  BTC
+  ETH
+  USDC
+  USDT
+  SOL
+  MATIC
+  LINK
+  UNI
+  AAVE
+  DAI
+}
+
+enum SDGGoal {
+  NO_POVERTY
+  ZERO_HUNGER
+  GOOD_HEALTH
+  QUALITY_EDUCATION
+  GENDER_EQUALITY
+  CLEAN_WATER
+  AFFORDABLE_ENERGY
+  DECENT_WORK
+  INDUSTRY_INNOVATION
+  REDUCED_INEQUALITIES
+  SUSTAINABLE_CITIES
+  RESPONSIBLE_CONSUMPTION
+  CLIMATE_ACTION
+  LIFE_BELOW_WATER
+  LIFE_ON_LAND
+  PEACE_JUSTICE
+  PARTNERSHIPS
+}
+
+enum AllocationFrequency {
+  ONE_TIME
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+enum WebhookEvent {
+  DONATION_CREATED
+  DONATION_COMPLETED
+  DONATION_FAILED
+  DONATION_REFUNDED
+  DISBURSEMENT_SCHEDULED
+  DISBURSEMENT_DELIVERED
+  FUND_CREATED
+  MATCHING_GIFT_APPROVED
+  CAMPAIGN_GOAL_REACHED
+}
+
+# ─── Nonprofit Domain ────────────────────────────────────────────────────────
+
+"""A verified 501(c)(3) nonprofit organization in the Every.org database."""
+type Nonprofit {
+  id: ID!
+  slug: NonprofitSlug!
+  name: NonprofitName!
+  description: NonprofitDescription
+  mission: NonprofitMission
+  website: NonprofitWebsite
+  ein: NonprofitEIN
+  ntee: NonprofitNTEE
+  category: NonprofitCategory
+  location: NonprofitLocation
+  size: NonprofitSize
+  revenue: RevenueData
+  logo: NonprofitLogo
+  cover: NonprofitCover
+  theme: NonprofitTheme
+  sdgs: [SDG!]
+  details: NonprofitDetails
+  verified: Boolean!
+  acceptingDonations: Boolean!
+  tags: [String!]
+  socialLinks: JSON
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+"""Extended metadata and compliance details for a nonprofit."""
+type NonprofitDetails {
+  nonprofit: Nonprofit!
+  irsClassification: String
+  subsection: String
+  affiliation: String
+  classificationCodes: [String!]
+  deductibilityCode: String
+  statusCode: String
+  foundingYear: Int
+  employeeCount: Int
+  volunteerCount: Int
+  programExpenseRatio: Float
+  fundraisingExpenseRatio: Float
+  adminExpenseRatio: Float
+  charitableCommitment: Float
+  accountabilityScore: Float
+}
+
+"""URL-safe unique identifier for a nonprofit on Every.org."""
+type NonprofitSlug {
+  value: String!
+  canonical: URL!
+}
+
+"""Display name of a nonprofit organization."""
+type NonprofitName {
+  primary: String!
+  legal: String
+  aka: [String!]
+}
+
+"""Human-readable description of a nonprofit's work."""
+type NonprofitDescription {
+  short: String
+  full: String
+  html: String
+}
+
+"""The stated mission of a nonprofit organization."""
+type NonprofitMission {
+  statement: String!
+  vision: String
+  values: [String!]
+}
+
+"""Primary web presence of a nonprofit."""
+type NonprofitWebsite {
+  url: URL!
+  donateUrl: URL
+  socialFacebook: URL
+  socialTwitter: URL
+  socialInstagram: URL
+  socialLinkedIn: URL
+}
+
+"""IRS Employer Identification Number for a nonprofit."""
+type NonprofitEIN {
+  value: EIN!
+  formatted: String!
+}
+
+"""National Taxonomy of Exempt Entities classification."""
+type NonprofitNTEE {
+  code: String!
+  description: String!
+  majorGroup: NTEE!
+}
+
+"""NTEE major group category."""
+type NTEE {
+  code: String!
+  label: String!
+  description: String
+}
+
+"""Broad category grouping for nonprofit discovery."""
+type NonprofitCategory {
+  id: ID!
+  name: String!
+  slug: String!
+  description: String
+  icon: String
+  nonprofitCount: Int
+}
+
+"""Geographic location data for a nonprofit."""
+type NonprofitLocation {
+  address: String
+  city: City
+  state: State
+  zip: Zip
+  country: Country
+  latitude: Float
+  longitude: Float
+}
+
+"""City component of a nonprofit address."""
+type City {
+  name: String!
+  slug: String!
+}
+
+"""US state or territory."""
+type State {
+  code: String!
+  name: String!
+}
+
+"""Postal code."""
+type Zip {
+  code: String!
+}
+
+"""Country of operation."""
+type Country {
+  code: String!
+  name: String!
+}
+
+"""Organization size classification based on revenue."""
+type NonprofitSizeData {
+  category: NonprofitSize!
+  annualRevenue: Currency
+  rangeLabel: String!
+}
+
+"""Annual financial data for a nonprofit."""
+type RevenueData {
+  totalRevenue: Currency
+  programRevenue: Currency
+  contributions: Currency
+  grants: Currency
+  governmentGrants: Currency
+  totalExpenses: Currency
+  totalAssets: Currency
+  fiscalYear: Int
+  source: String
+}
+
+"""Logo image for a nonprofit."""
+type NonprofitLogo {
+  url: URL!
+  width: Int
+  height: Int
+  thumbnailUrl: URL
+}
+
+"""Cover or banner image for a nonprofit profile."""
+type NonprofitCover {
+  url: URL!
+  width: Int
+  height: Int
+}
+
+"""Brand theme colors for a nonprofit profile."""
+type NonprofitTheme {
+  primaryColor: String
+  secondaryColor: String
+  accentColor: String
+  textColor: String
+  backgroundColor: String
+}
+
+"""UN Sustainable Development Goal alignment."""
+type SDG {
+  goal: SDGGoal!
+  number: Int!
+  title: String!
+  description: String
+  iconUrl: URL
+}
+
+# ─── Fund Domain ─────────────────────────────────────────────────────────────
+
+"""A donor-advised fund or giving fund managed on Every.org."""
+type Fund {
+  id: ID!
+  slug: FundSlug!
+  name: String!
+  description: String
+  details: FundDetails
+  balance: FundBalance
+  allocations: [FundAllocation!]
+  donor: Donor
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isPublic: Boolean!
+}
+
+"""Extended metadata for a giving fund."""
+type FundDetails {
+  fund: Fund!
+  purpose: String
+  targetAmount: Currency
+  minimumGrant: Currency
+  grantingPolicy: String
+  taxYear: Int
+  sponsoringOrganization: String
+}
+
+"""URL-safe identifier for a fund."""
+type FundSlug {
+  value: String!
+  canonical: URL!
+}
+
+"""Current balance and value of a fund."""
+type FundBalance {
+  available: Currency!
+  pending: Currency!
+  total: Currency!
+  asOfDate: Date!
+  currency: String!
+}
+
+"""An allocation from a fund to a nonprofit."""
+type FundAllocation {
+  id: ID!
+  fund: Fund!
+  nonprofit: Nonprofit!
+  amount: Currency!
+  percentage: Float
+  frequency: AllocationFrequency!
+  note: String
+  createdAt: DateTime!
+  processedAt: DateTime
+  status: DisbursementStatus!
+}
+
+# ─── Donation Domain ─────────────────────────────────────────────────────────
+
+"""A charitable donation transaction."""
+type Donation {
+  id: ID!
+  nonprofit: Nonprofit!
+  donor: Donor!
+  amount: DonationAmount!
+  payment: Payment
+  status: DonationStatus!
+  details: DonationDetails
+  matchingGift: MatchingGift
+  campaign: Campaign
+  note: String
+  isAnonymous: Boolean!
+  createdAt: DateTime!
+  completedAt: DateTime
+}
+
+"""Supplementary details for a donation transaction."""
+type DonationDetails {
+  donation: Donation!
+  receiptUrl: URL
+  taxReceiptSent: Boolean
+  dedicatedTo: String
+  notifyEmail: String
+  recurringSchedule: String
+  parentDonationId: ID
+  refundedAt: DateTime
+  refundReason: String
+  metadata: JSON
+}
+
+"""Monetary value of a donation."""
+type DonationAmount {
+  value: Currency!
+  currency: String!
+  formatted: String!
+  feesCovered: Boolean!
+  platformFee: Currency
+  processingFee: Currency
+  netAmount: Currency!
+}
+
+# ─── Donor Domain ────────────────────────────────────────────────────────────
+
+"""A person or entity that makes donations on Every.org."""
+type Donor {
+  id: ID!
+  profile: DonorProfile
+  totals: DonorTotal
+  isAnonymous: Boolean!
+  anonymous: Anonymous
+  donations: [Donation!]
+  funds: [Fund!]
+  createdAt: DateTime!
+}
+
+"""Public profile information for a donor."""
+type DonorProfile {
+  displayName: String!
+  firstName: String
+  lastName: String
+  email: String
+  avatarUrl: URL
+  bio: String
+  location: String
+  website: URL
+  socialLinks: JSON
+}
+
+"""Aggregate donation totals for a donor."""
+type DonorTotal {
+  lifetimeAmount: Currency!
+  yearToDateAmount: Currency!
+  donationCount: Int!
+  nonprofitCount: Int!
+  lastDonationDate: Date
+}
+
+"""Anonymized representation when donor privacy is requested."""
+type Anonymous {
+  displayName: String!
+  avatarUrl: URL
+}
+
+# ─── Payment Domain ──────────────────────────────────────────────────────────
+
+"""A payment transaction associated with a donation."""
+type Payment {
+  id: ID!
+  method: PaymentMethod!
+  amount: Currency!
+  currency: String!
+  status: DonationStatus!
+  processorId: String
+  createdAt: DateTime!
+  settledAt: DateTime
+}
+
+"""A payment instrument used to make a donation."""
+type PaymentMethod {
+  id: ID!
+  type: PaymentMethodType!
+  card: Card
+  ach: ACH
+  daf: DAF
+  crypto: CryptoGift
+  stock: StockGift
+  isDefault: Boolean!
+  createdAt: DateTime!
+}
+
+"""Credit or debit card payment method."""
+type Card {
+  brand: String!
+  last4: String!
+  expMonth: Int!
+  expYear: Int!
+  holderName: String
+  billingZip: String
+  processorToken: String
+}
+
+"""ACH bank transfer payment method."""
+type ACH {
+  bankName: String!
+  accountType: String!
+  last4: String!
+  routingNumber: String
+  processorToken: String
+  verifiedAt: DateTime
+}
+
+"""Donor-advised fund as a payment source."""
+type DAF {
+  id: ID!
+  details: DAFDetails!
+  balance: Currency
+  sponsorName: String!
+}
+
+"""Details for a donor-advised fund payment source."""
+type DAFDetails {
+  daf: DAF!
+  accountNumber: String
+  sponsorOrg: String!
+  grantRecommendation: String
+  processingNotes: String
+  confirmedAt: DateTime
+}
+
+"""Cryptocurrency gift transaction."""
+type CryptoGift {
+  id: ID!
+  currency: CryptoCurrency!
+  amountCrypto: Float!
+  amountUSD: Currency!
+  walletAddress: String
+  transactionHash: String
+  exchangeRate: Float!
+  receivedAt: DateTime
+}
+
+"""A cryptocurrency accepted for donations."""
+type CryptoCurrency {
+  symbol: CryptoCurrencySymbol!
+  name: String!
+  network: String!
+  contractAddress: String
+  decimals: Int!
+  iconUrl: URL
+}
+
+"""Stock gift donation transaction."""
+type StockGift {
+  id: ID!
+  tickerSymbol: String!
+  shares: Float!
+  sharePrice: Currency!
+  totalValue: Currency!
+  brokerName: String
+  accountNumber: String
+  transferredAt: DateTime
+}
+
+# ─── Matching Gift Domain ────────────────────────────────────────────────────
+
+"""A matching gift program associated with a donation."""
+type MatchingGift {
+  id: ID!
+  donation: Donation!
+  employer: MatchingEmployer!
+  match: MatchingMatch!
+  status: DonationStatus!
+  submittedAt: DateTime
+  approvedAt: DateTime
+  paidAt: DateTime
+}
+
+"""An employer that sponsors a matching gift program."""
+type MatchingEmployer {
+  id: ID!
+  name: String!
+  domain: String
+  logoUrl: URL
+  matchingRatio: Float!
+  annualLimit: Currency
+  eligibleNonprofitTypes: [String!]
+  programUrl: URL
+}
+
+"""The matched amount details for a matching gift."""
+type MatchingMatch {
+  originalAmount: Currency!
+  matchedAmount: Currency!
+  ratio: Float!
+  cappedAt: Currency
+  notes: String
+}
+
+# ─── Allocation Domain ───────────────────────────────────────────────────────
+
+"""A directed allocation from a fund or donor to a nonprofit."""
+type Allocation {
+  id: ID!
+  source: Fund
+  nonprofit: Nonprofit!
+  amount: Currency!
+  frequency: AllocationFrequency!
+  startDate: Date
+  endDate: Date
+  note: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# ─── Disbursement Domain ────────────────────────────────────────────────────
+
+"""A disbursement payment from Every.org to a nonprofit."""
+type Disbursement {
+  id: ID!
+  nonprofit: Nonprofit!
+  amount: Currency!
+  status: DisbursementStatus!
+  details: DisbursementDetails!
+  createdAt: DateTime!
+  scheduledAt: DateTime
+  deliveredAt: DateTime
+}
+
+"""Supplementary details for a disbursement."""
+type DisbursementDetails {
+  disbursement: Disbursement!
+  paymentMethod: String!
+  referenceNumber: String
+  memo: String
+  donationPeriodStart: Date
+  donationPeriodEnd: Date
+  donationCount: Int!
+  grossAmount: Currency!
+  fees: Currency!
+  netAmount: Currency!
+  receiptUrl: URL
+}
+
+"""Status record for a disbursement in transit."""
+type DisbursementStatusRecord {
+  disbursement: Disbursement!
+  status: DisbursementStatus!
+  message: String
+  updatedAt: DateTime!
+  estimatedDelivery: Date
+  trackingNumber: String
+}
+
+# ─── Campaign Domain ────────────────────────────────────────────────────────
+
+"""A fundraising campaign for a nonprofit."""
+type Campaign {
+  id: ID!
+  slug: String!
+  title: String!
+  description: String
+  nonprofit: Nonprofit!
+  details: CampaignDetails
+  goal: CampaignGoal
+  events: [Event!]
+  donateButton: BtnDonate
+  widget: DonateWidget
+  isActive: Boolean!
+  startDate: Date
+  endDate: Date
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Extended metadata for a fundraising campaign."""
+type CampaignDetails {
+  campaign: Campaign!
+  heroImageUrl: URL
+  videoUrl: URL
+  impactStatement: String
+  matchingActive: Boolean!
+  matchingMultiplier: Float
+  matchingSponsor: String
+  shareUrl: URL
+  embedCode: String
+}
+
+"""Fundraising goal and progress for a campaign."""
+type CampaignGoal {
+  targetAmount: Currency!
+  raisedAmount: Currency!
+  donorCount: Int!
+  percentComplete: Float!
+  daysRemaining: Int
+  reachedAt: DateTime
+}
+
+# ─── Event Domain ────────────────────────────────────────────────────────────
+
+"""A fundraising event linked to a campaign."""
+type Event {
+  id: ID!
+  slug: String!
+  title: String!
+  description: String
+  details: EventDetails
+  campaign: EventCampaign
+  nonprofit: Nonprofit!
+  startDateTime: DateTime!
+  endDateTime: DateTime
+  timezone: String
+  location: String
+  virtualUrl: URL
+  registrationUrl: URL
+  isPublic: Boolean!
+  createdAt: DateTime!
+}
+
+"""Extended details for a fundraising event."""
+type EventDetails {
+  event: Event!
+  capacity: Int
+  registeredCount: Int
+  waitlistCount: Int
+  ticketPrice: Currency
+  dresscode: String
+  agenda: String
+  speakerBios: JSON
+  sponsorLogos: [URL!]
+  mapEmbedUrl: URL
+}
+
+"""Campaign reference within an event context."""
+type EventCampaign {
+  campaign: Campaign!
+  goalForEvent: Currency
+  raisedAtEvent: Currency
+}
+
+# ─── Widget Domain ───────────────────────────────────────────────────────────
+
+"""A donate button embed configuration."""
+type BtnDonate {
+  id: ID!
+  nonprofit: Nonprofit!
+  campaign: Campaign
+  buttonText: String!
+  primaryColor: String
+  embedCode: String!
+  targetUrl: URL!
+  createdAt: DateTime!
+}
+
+"""An embeddable donation widget configuration."""
+type DonateWidget {
+  id: ID!
+  nonprofit: Nonprofit!
+  campaign: Campaign
+  widgetType: String!
+  defaultAmounts: [Currency!]
+  defaultFrequency: AllocationFrequency
+  primaryColor: String
+  showImpact: Boolean!
+  embedCode: String!
+  previewUrl: URL
+  createdAt: DateTime!
+}
+
+# ─── Auth Domain ─────────────────────────────────────────────────────────────
+
+"""An API key for partner access to Every.org APIs."""
+type APIKey {
+  id: ID!
+  name: String!
+  keyPreview: String!
+  scopes: [String!]!
+  rateLimit: Int!
+  isActive: Boolean!
+  createdAt: DateTime!
+  lastUsedAt: DateTime
+  expiresAt: DateTime
+}
+
+"""A short-lived bearer token for authenticated API requests."""
+type Token {
+  accessToken: String!
+  tokenType: String!
+  expiresIn: Int!
+  scopes: [String!]!
+  issuedAt: DateTime!
+}
+
+"""A webhook subscription for real-time event delivery."""
+type Webhook {
+  id: ID!
+  url: URL!
+  events: [WebhookEvent!]!
+  secret: String
+  isActive: Boolean!
+  failureCount: Int!
+  lastDeliveredAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# ─── Query Root ─────────────────────────────────────────────────────────────
+
+type Query {
+  """Search for nonprofits by name, EIN, category, or location."""
+  searchNonprofits(
+    query: String
+    ein: EIN
+    category: String
+    location: String
+    size: NonprofitSize
+    sdg: SDGGoal
+    nteeCode: String
+    limit: Int
+    offset: Int
+  ): [Nonprofit!]!
+
+  """Fetch a single nonprofit by slug or EIN."""
+  nonprofit(slug: String, ein: EIN): Nonprofit
+
+  """List all NTEE major groups."""
+  nteeGroups: [NTEE!]!
+
+  """List nonprofit categories."""
+  categories: [NonprofitCategory!]!
+
+  """Fetch a fund by ID or slug."""
+  fund(id: ID, slug: String): Fund
+
+  """List funds for the authenticated donor."""
+  myFunds: [Fund!]!
+
+  """Fetch a donation by ID."""
+  donation(id: ID!): Donation
+
+  """List donations for the authenticated donor."""
+  myDonations(limit: Int, offset: Int): [Donation!]!
+
+  """Fetch a campaign by slug."""
+  campaign(slug: String!): Campaign
+
+  """Fetch an event by slug."""
+  event(slug: String!): Event
+
+  """List disbursements for a nonprofit."""
+  disbursements(nonprofitSlug: String!, limit: Int, offset: Int): [Disbursement!]!
+
+  """List webhooks for the authenticated partner."""
+  webhooks: [Webhook!]!
+
+  """Fetch API keys for the authenticated partner."""
+  apiKeys: [APIKey!]!
+}
+
+# ─── Mutation Root ───────────────────────────────────────────────────────────
+
+type Mutation {
+  """Create a donation to a nonprofit."""
+  createDonation(
+    nonprofitSlug: String!
+    amount: Float!
+    currency: String
+    paymentMethodId: ID!
+    note: String
+    isAnonymous: Boolean
+    coverFees: Boolean
+    campaignSlug: String
+  ): Donation!
+
+  """Create a new donor-advised fund."""
+  createFund(
+    name: String!
+    description: String
+    isPublic: Boolean
+  ): Fund!
+
+  """Add an allocation from a fund to a nonprofit."""
+  createAllocation(
+    fundId: ID!
+    nonprofitSlug: String!
+    amount: Float!
+    frequency: AllocationFrequency!
+    note: String
+  ): FundAllocation!
+
+  """Register a webhook endpoint."""
+  createWebhook(
+    url: URL!
+    events: [WebhookEvent!]!
+  ): Webhook!
+
+  """Deactivate a webhook."""
+  deleteWebhook(id: ID!): Boolean!
+
+  """Create a donate button widget configuration."""
+  createDonateButton(
+    nonprofitSlug: String!
+    campaignSlug: String
+    buttonText: String
+    primaryColor: String
+  ): BtnDonate!
+
+  """Create a donation widget embed configuration."""
+  createDonateWidget(
+    nonprofitSlug: String!
+    campaignSlug: String
+    defaultAmounts: [Float!]
+    primaryColor: String
+    showImpact: Boolean
+  ): DonateWidget!
+}
