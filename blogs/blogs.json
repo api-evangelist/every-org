@@ -9,6 +9,13 @@
       "method": "feed"
     },
     {
+      "source": "https://blog.every.org/rss/",
+      "feed_url": "https://blog.every.org/rss/",
+      "title": "",
+      "saved": 0,
+      "method": "feed"
+    },
+    {
       "source": "https://blog.every.org/",
       "feed_url": "https://blog.every.org/rss/",
       "title": "",
@@ -16,6 +23,6 @@
       "method": "discovered"
     }
   ],
-  "post_count": 22,
-  "fetched": "2026-06-27T12:03:07Z"
+  "post_count": 23,
+  "fetched": "2026-07-11T11:50:51Z"
 }
