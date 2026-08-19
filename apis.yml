@@ -55,7 +55,7 @@ description: Every.org is a platform that empowers individuals to give back and 
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 common:
 - type: DomainSecurity
   url: security/every-org-domain-security.yml
