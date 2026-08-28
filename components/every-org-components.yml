@@ -1,0 +1,72 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/donate-button, https://docs.every.org/docs/donate-link,
+  https://github.com/everydotorg/donate-button, https://embeds.every.org/0.4/button.js
+provider: Every.org
+providerId: every-org
+description: >-
+  Client-side and hosted surfaces Every.org publishes for embedding the donation experience in a
+  third-party site. These are the primary way most partners integrate with Every.org — the REST
+  API handles nonprofit discovery and fundraiser management, while money movement happens inside
+  Every.org's own hosted flow reached through one of these components. Distinct from SDKs:
+  Every.org ships no API client library (see packages/every-org-packages.yml).
+families:
+  - id: donate-button
+    name: Donate Button
+    kind: embeddable-widget
+    docs: https://docs.every.org/docs/donate-button
+    repo: https://github.com/everydotorg/donate-button
+    open_source: true
+    loader: https://embeds.every.org/0.4/button.js
+    loader_http_status: 200
+    probed: '2026-08-28'
+    version: 0.4.0
+    description: >-
+      A drop-in donate button and donation widget. In its default mode a single script tag plus
+      an anchor carrying `data-every-style` and an href of https://www.every.org/{slug}#/donate
+      renders a styled button that opens the Every.org donation flow. Accepts cryptocurrency,
+      stock, DAF, card and mobile-wallet gifts through Every.org's hosted checkout.
+    modes:
+      - name: implicit
+        detail: >-
+          Include the script; any anchor pointing at an Every.org #/donate URL is upgraded
+          automatically. `data-every-style` opts into Every.org styling.
+      - name: explicit
+        detail: >-
+          Append ?explicit=1 to the script src and call
+          everyDotOrgDonateButton.createButton({selector}) and
+          everyDotOrgDonateButton.createWidget({selector, nonprofitSlug}) yourself.
+    global: everyDotOrgDonateButton
+    api:
+      - createButton({ selector })
+      - createWidget({ selector, nonprofitSlug })
+    staging_flag: 'staging: true (passed to the create* calls)'
+    demos: https://embeds.every.org/0.4
+    production_example: https://www.goodjobbub.org/
+  - id: donate-link
+    name: Donate Link
+    kind: hosted-flow
+    docs: https://docs.every.org/docs/donate-link
+    open_source: false
+    description: >-
+      A parameterised link into the Every.org donation flow for a nonprofit. Query parameters
+      pre-fill the donation amount and frequency and control flow behaviour — whether a
+      background shows, whether the donor is redirected back to the partner's site after
+      completing the gift, the `designation` (added 2023-03-22) and the `method` value (the
+      `gift` option added 2023-12-12). Partner attribution rides on it as `partnerDonationId`
+      and base64-encoded `partnerMetadata`, both of which are echoed back on the Partner Webhook.
+    url_form: https://www.every.org/{nonprofitSlug}#/donate
+    staging_form: https://staging.every.org/{nonprofitSlug}#/donate
+    feeds: webhooks/every-org-webhooks.yml
+notes:
+  - >-
+    Both components are the delivery mechanism for donations; the Partner API itself has no
+    payment endpoint. Any agent or integration that needs to move money must hand off to a human
+    inside one of these hosted surfaces.
+  - >-
+    There is no React, Vue, or web-component npm package for either family — distribution is a
+    script tag from embeds.every.org only.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

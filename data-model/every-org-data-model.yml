@@ -1,0 +1,216 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/endpoints/nonprofits,
+  https://docs.every.org/docs/endpoints/fundraisers,
+  https://docs.every.org/docs/types,
+  https://docs.every.org/docs/webhooks/
+provider: Every.org
+providerId: every-org
+description: >-
+  Entity-relationship model for the Every.org Partner (Charity) API, read field-by-field from the
+  published JSON response examples and parameter documentation. Every.org publishes no OpenAPI or
+  JSON Schema, so this graph is transcribed from the documented payloads rather than derived from
+  a spec. Only entities and fields that appear in Every.org's own documented responses are
+  recorded.
+derived_from: documentation response examples (no machine-readable schema published)
+identifier_schemes:
+  - name: EIN
+    standard: IRS Employer Identification Number
+    format: 9 digits, no dashes, no "ein:" prefix
+    example: '526001065'
+    entity: Nonprofit
+    note: >-
+      Documented explicitly on 2026-06-16 after ambiguity: "52-6001065" and "ein:52-6001065" are
+      both wrong. Undefined for fiscally sponsored organizations, which have no EIN of their own.
+  - name: Nonprofit ID
+    standard: UUID (Every.org internal)
+    example: 75924760-cd27-4ecc-a9d4-c0660c08961a
+    entity: Nonprofit
+  - name: Slug
+    standard: Every.org URL slug
+    example: homewardpet
+    entity: Nonprofit
+    url_form: https://www.every.org/{slug}
+  - name: NTEE code
+    standard: National Taxonomy of Exempt Entities
+    example: D20
+    entity: Nonprofit
+    note: >-
+      Returned as `nteeCode` plus an expanded `nteeCodeMeaning` object carrying majorCode,
+      majorMeaning, decileCode and decileMeaning. See conformance/every-org-conformance.yml.
+  - name: Charge ID
+    standard: Every.org internal
+    entity: Donation
+    note: Matches the "Charge ID" shown in the nonprofit Admin Dashboard.
+entities:
+  - name: Nonprofit
+    description: An IRS-verified 501(c)(3) organization on Every.org. Over 1 million are searchable.
+    endpoints:
+      - GET /v0.2/nonprofit/{identifier}
+      - GET /v0.2/search/{searchTerm}
+      - GET /v0.2/browse/{cause}
+    fields:
+      - { name: id, type: string (uuid) }
+      - { name: name, type: string }
+      - { name: primarySlug, type: string }
+      - { name: slug, type: string, note: returned by browse }
+      - { name: ein, type: string }
+      - { name: isDisbursable, type: boolean }
+      - { name: description, type: string }
+      - { name: descriptionLong, type: string | null }
+      - { name: locationAddress, type: string, note: returned by the details endpoint }
+      - { name: location, type: string, note: returned by browse }
+      - { name: nteeCode, type: string }
+      - { name: nteeCodeMeaning, type: object }
+      - { name: logoCloudinaryId, type: string }
+      - { name: coverImageCloudinaryId, type: string }
+      - { name: logoUrl, type: string (url) }
+      - { name: coverImageUrl, type: string (url) }
+      - { name: profileUrl, type: string (url) }
+      - { name: websiteUrl, type: string (url) }
+      - { name: matchedTerms, type: "array[string]", note: returned by search only }
+      - { name: tags, type: "array[string]", note: returned by browse only }
+    shape_note: >-
+      The three endpoints return three different projections of Nonprofit. The details endpoint
+      nests it under data.nonprofit; search and browse return flat arrays under `nonprofits`, and
+      the field sets differ (primarySlug/locationAddress vs slug/location). An integrator cannot
+      assume one Nonprofit shape across the API.
+  - name: NTEECodeMeaning
+    description: Expanded National Taxonomy of Exempt Entities classification for a nonprofit.
+    fields:
+      - { name: majorCode, type: string, example: D }
+      - { name: majorMeaning, type: string, example: Animal Related }
+      - { name: decileCode, type: string, example: D20 }
+      - { name: decileMeaning, type: string, example: Animal Protection and Welfare }
+  - name: NonprofitTag
+    description: A cause tag associating a nonprofit with a topical category.
+    endpoints:
+      - GET /v0.2/nonprofit/{identifier}
+    fields:
+      - { name: id, type: string (uuid) }
+      - { name: tagName, type: string, example: animals }
+      - { name: causeCategory, type: string, example: ANIMALS }
+      - { name: title, type: string, example: Animals }
+      - { name: tagImageCloudinaryId, type: string }
+      - { name: tagUrl, type: string (url) }
+      - { name: tagImageUrl, type: string (url) }
+  - name: Cause
+    description: >-
+      Controlled vocabulary of 69 cause slugs used to categorise nonprofits and to filter search
+      and browse. Published list last updated 2023-06-06.
+    vocabulary_url: https://docs.every.org/docs/types
+    used_by:
+      - GET /v0.2/browse/{cause}
+      - 'GET /v0.2/search/{searchTerm}?causes='
+  - name: Pagination
+    description: Page envelope returned by the browse endpoint.
+    fields:
+      - { name: page, type: integer }
+      - { name: pages, type: integer }
+      - { name: page_size, type: integer }
+      - { name: total_results, type: integer }
+  - name: Fundraiser
+    description: A fundraising campaign benefiting one or more nonprofits.
+    endpoints:
+      - GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}
+      - POST /v0.2/fundraiser
+    fields:
+      - { name: nonprofitId, type: string (uuid), required_on_create: true }
+      - { name: title, type: string, required_on_create: true }
+      - { name: description, type: string | null }
+      - { name: startDate, type: string (date-time) | null }
+      - { name: endDate, type: string (date-time) | null }
+      - { name: goal, type: integer, unit: cents }
+      - { name: raisedOffline, type: integer | null, unit: cents }
+      - { name: currency, type: string, values: [USD] }
+      - { name: imageBase64, type: string, note: optional base64-encoded cover image }
+      - { name: type, type: string, values: [MULTIPLE_NONPROFITS], note: multi-nonprofit only }
+      - { name: forNonprofits, type: "array[uuid]", note: multi-nonprofit only }
+      - { name: forNonprofitWeights, type: "array[integer]", note: optional, defaults to equal }
+    url_form: https://www.every.org/{nonprofit.slug}/f/{fundraiser.slug}
+    special_case: >-
+      Multi-nonprofit fundraisers use the reserved nonprofitId
+      ddacc399-20c5-462e-80e1-97fa958071ea and the reserved nonprofitIdentifier
+      "special-fundraiser" on read paths.
+  - name: FundraiserRaised
+    description: Progress snapshot for a fundraiser.
+    endpoints:
+      - GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}/raised
+    fields:
+      - { name: currency, type: string, values: [USD] }
+      - { name: raised, type: integer, unit: cents }
+      - { name: supporters, type: integer }
+      - { name: goalAmount, type: integer, unit: cents }
+      - { name: goalType, type: string, values: [CUSTOM, AUTOMATIC] }
+  - name: Donation
+    description: >-
+      A completed gift. Not readable through the REST API — Donation exists only as a webhook
+      payload. This is the API's central asymmetry: donations are created by a human in the
+      hosted flow and reported outward by webhook, never queried.
+    delivered_by:
+      - Nonprofit Donation Webhook
+      - Partner Webhook
+    see: webhooks/every-org-webhooks.yml
+    fields:
+      - { name: chargeId, type: string }
+      - { name: partnerDonationId, type: string | undefined }
+      - { name: partnerMetadata, type: object | undefined }
+      - { name: designation, type: string | undefined }
+      - { name: firstName, type: string | undefined }
+      - { name: lastName, type: string | undefined | null }
+      - { name: email, type: string | null }
+      - { name: amount, type: string, unit: major currency unit }
+      - { name: netAmount, type: string }
+      - { name: currency, type: string, standard: ISO 4217 }
+      - { name: frequency, type: enum, values: [Yearly, Monthly, One-time] }
+      - { name: donationDate, type: string (date-time) }
+      - { name: publicTestimony, type: string | undefined }
+      - { name: privateNote, type: string | undefined }
+      - { name: paymentMethod, type: string }
+    unit_warning: >-
+      Donation amounts are strings in the major currency unit ("1000.00"); Fundraiser goal and
+      raised amounts are integers in cents (100000). The same money is represented two different
+      ways in the same API.
+relationships:
+  - from: Nonprofit
+    to: NonprofitTag
+    kind: has_many
+    via: data.nonprofitTags
+  - from: Nonprofit
+    to: NTEECodeMeaning
+    kind: has_one
+    via: nteeCodeMeaning
+  - from: Nonprofit
+    to: Cause
+    kind: has_many
+    via: tags (browse response) / causes filter parameter
+  - from: Fundraiser
+    to: Nonprofit
+    kind: belongs_to
+    via: nonprofitId
+  - from: Fundraiser
+    to: Nonprofit
+    kind: has_many
+    via: forNonprofits
+    note: Multi-nonprofit fundraisers only, with optional forNonprofitWeights.
+  - from: Fundraiser
+    to: FundraiserRaised
+    kind: has_one
+    via: /raised sub-resource
+  - from: Donation
+    to: Nonprofit
+    kind: belongs_to
+    via: toNonprofit.slug
+  - from: Donation
+    to: Fundraiser
+    kind: belongs_to
+    via: fromFundraiser.id
+    optional: true
+  - from: BrowseResult
+    to: Pagination
+    kind: has_one
+    via: pagination
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

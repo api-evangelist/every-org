@@ -1,0 +1,179 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/endpoints/nonprofits,
+  https://docs.every.org/docs/endpoints/fundraisers,
+  https://docs.every.org/docs/endpoints/authentication,
+  https://docs.every.org/docs/webhooks/,
+  live probes of https://partners.every.org/v0.2/* (2026-08-28)
+provider: Every.org
+providerId: every-org
+api: Every.org Partner (Charity) API
+base_url: https://partners.every.org/v0.2
+description: >-
+  Cross-cutting runtime semantics for the Every.org Partner API, read from the provider's own
+  Docusaurus documentation at docs.every.org and confirmed against live unauthenticated probes.
+  Every.org publishes no OpenAPI, GraphQL, or AsyncAPI contract, so every convention below is
+  sourced from prose documentation or an observed response.
+
+authentication:
+  style: api-key
+  detail: >-
+    Public key as the `apiKey` query parameter for reads; HTTP Basic (public key as username,
+    private key as password) for privileged writes.
+  see: authentication/every-org-authentication.yml
+  docs: https://docs.every.org/docs/endpoints/authentication
+
+versioning:
+  style: uri-path
+  current: v0.2
+  example: https://partners.every.org/v0.2/search/pets
+  declared_in_docs: >-
+    Both the Nonprofits and Fundraisers endpoint pages state "Current version: v0.2".
+  policy_published: false
+  note: >-
+    No version-support, sunset, or breaking-change policy is published. The version has been
+    v0.2 across every dated changelog entry from 2023-02-21 to 2026-06-16.
+
+pagination:
+  style: page-number
+  applies_to:
+    - GET /v0.2/browse/{cause}
+  params:
+    - name: take
+      meaning: results per page
+      maximum: 100
+      applies_to: GET /v0.2/browse/{cause}
+    - name: take
+      meaning: number of results to return
+      maximum: 50
+      applies_to: GET /v0.2/search/{searchTerm}
+    - name: page
+      meaning: which page of results to return
+      applies_to: GET /v0.2/browse/{cause}
+  response_envelope:
+    field: pagination
+    members:
+      - page
+      - pages
+      - page_size
+      - total_results
+  cursor_support: false
+  note: >-
+    Only the browse endpoint returns a pagination object. Search returns a bare `nonprofits`
+    array with no pagination block and is capped at take=50.
+
+filtering:
+  - param: causes
+    applies_to: GET /v0.2/search/{searchTerm}
+    semantics: >-
+      Comma-joined list, evaluated as an OR filter (causes=humans,environment returns nonprofits
+      matching either).
+    legacy_alias: tags
+    alias_note: >-
+      Renamed from `tags` to `causes`; `tags` is documented as continuing to work for backwards
+      compatibility. This is the only documented backwards-compatibility commitment in the API.
+    vocabulary: https://docs.every.org/docs/types
+
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: true
+  detail: >-
+    Partner-supplied metadata rides the donate link / donate button as `partnerMetadata`
+    (base64-encoded JSON) and `partnerDonationId`, and is echoed back on the Partner Webhook
+    payload. It is a donate-flow facility, not a REST API facility.
+  docs: https://docs.every.org/docs/webhooks/partner-webhook
+
+request_id_tracing:
+  supported: false
+  note: >-
+    No request-id or correlation header is documented, and none was observed on live responses.
+    Responses carry only Cloudflare's `cf-ray`, which is edge infrastructure, not a provider
+    trace identifier.
+
+error_envelope:
+  format: plain-text
+  rfc9457: false
+  detail: >-
+    Observed errors are plain text with content-type text/plain;charset=UTF-8 — "API key missing"
+    (HTTP 400) and "Not found" (HTTP 404). There is no JSON error object, no error code, and no
+    documented error reference.
+  see: errors/every-org-problem-types.yml
+
+rate_limit_signaling:
+  published_limits: true
+  response_headers: none-observed
+  detail: >-
+    Per-endpoint per-key limits ARE published in prose (100/min for nonprofit details, 500/min for
+    search and browse), but no RateLimit-*, X-RateLimit-*, or Retry-After header was present on
+    any observed response, and none is documented. An agent cannot read remaining budget at
+    runtime; it can only read the number out of the docs.
+  see: rate-limits/every-org-rate-limits.yml
+
+content_type:
+  request: application/json
+  response: application/json
+  charset: UTF-8
+
+idempotency:
+  supported: false
+  na: false
+  detail: >-
+    There is exactly one documented write operation — POST /v0.2/fundraiser — and no idempotency
+    key header, no client-supplied request token, and no documented deduplication behaviour. A
+    retried fundraiser creation must be assumed to create a second fundraiser.
+  header: null
+  scope: null
+  retention: null
+  evidence: https://docs.every.org/docs/endpoints/fundraisers
+
+dry_run_mode:
+  supported: false
+  detail: >-
+    No dry-run, validate-only, or preview parameter is documented on POST /v0.2/fundraiser.
+    The nearest facility is the separate staging environment (staging.every.org), which is a
+    different environment rather than a rehearsal mode on the production call.
+  see: sandbox/every-org-sandbox.yml
+
+reversibility:
+  grade: undocumented
+  na: false
+  write_surface_present: true
+  detail: >-
+    The API has a write surface (POST /v0.2/fundraiser creates a public fundraiser) and the
+    documentation describes no way to reverse it. There is no DELETE, no cancel, no archive, and
+    no update operation published for fundraisers, and no stated window for any of them. An agent
+    creating a fundraiser through this API cannot un-create it through this API.
+  surfaces:
+    - operation: POST /v0.2/fundraiser
+      action: Create a nonprofit fundraiser under the authenticated partner account
+      reversal_operation: null
+      reversal_window: null
+      window_source: null
+      note: >-
+        No reversal path is documented. Every.org's docs cover only creation and read
+        (GET .../fundraiser/{id} and .../raised). Whether a fundraiser can be ended or deleted
+        through the Every.org web UI is outside the API contract and is not asserted here.
+  donation_reversibility:
+    note: >-
+      Donations are NOT initiated through this API — they are initiated by a human in the
+      Every.org donate flow reached via a Donate Link or Donate Button, and reported back over
+      webhook. Refund policy therefore sits with Every.org support, not with an API operation,
+      and no refund/void/reverse endpoint exists in the Partner API.
+  no_invented_windows: >-
+    Every.org publishes no reversal window of any kind. None is asserted here.
+
+cross_links:
+  errors: errors/every-org-problem-types.yml
+  lifecycle: lifecycle/every-org-lifecycle.yml
+  authentication: authentication/every-org-authentication.yml
+  rate_limits: rate-limits/every-org-rate-limits.yml
+  webhooks: webhooks/every-org-webhooks.yml
+  data_model: data-model/every-org-data-model.yml
+
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

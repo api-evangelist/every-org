@@ -1,0 +1,40 @@
+removed: '2026-08-28'
+by: API Evangelist enrichment pipeline (local-v1)
+paths:
+  - graphql/every-org-schema.graphql
+  - graphql/every-org-graphql.md
+original_commit: c06ffc1 "Add GraphQL schema for Every.org"
+reason: fabricated-contract
+detail: >-
+  Every.org does not have a GraphQL API. The removed files declared a 902-line, 58-type GraphQL
+  SDL and a supporting markdown page describing an "Every.org GraphQL API", neither of which
+  carried provenance frontmatter. The schema invented an entire domain model — CryptoGift,
+  StockGift, MatchingEmployer, DAFDetails, Disbursement, FundAllocation, APIKey, Token — none of
+  which appears anywhere in Every.org's published documentation. Every.org's actual API is a
+  small REST surface at https://partners.every.org/v0.2 with five documented GET operations and
+  one POST.
+evidence:
+  - url: https://partners.every.org/graphql
+    method: POST
+    body: '{"query":"{__schema{queryType{name}}}"}'
+    status: 404
+    response_body: Not found
+    probed: '2026-08-28'
+  - url: https://partners.every.org/v0.2/graphql
+    method: POST
+    status: 404
+    response_body: Not found
+    probed: '2026-08-28'
+  - url: https://api.every.org/graphql
+    status: NXDOMAIN
+    note: Host does not resolve.
+    probed: '2026-08-28'
+  - url: https://docs.every.org/sitemap.xml
+    status: 200
+    note: >-
+      The complete documentation sitemap lists 13 pages; none mentions GraphQL. The documented
+      surface is REST only.
+    probed: '2026-08-28'
+action_taken: >-
+  Files deleted and the apis[].properties[] pointer of type GraphQL removed from apis.yml, so the
+  catalog no longer credits Every.org with a GraphQL contract it does not publish.

@@ -1,0 +1,111 @@
+generated: '2026-08-28'
+method: probed
+source: live HTTP probes of /.well-known/* on every Every.org host (2026-08-28)
+provider: Every.org
+providerId: every-org
+description: >-
+  Probe record for /.well-known/ discovery documents across every Every.org host. Every path
+  missed on every host. No document was retrieved, so no WellKnown, APICatalog, or SecurityTxt
+  pointer is emitted in apis.yml — this file records an absence, and an absence must not be
+  wired as a presence.
+result: none-served
+documents_retrieved: 0
+hosts:
+  - host: partners.every.org
+    role: API host (baseURL)
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+    note: >-
+      Clean plain-text 404s with body "Not found" — an honest miss, not an SPA catch-all.
+  - host: docs.every.org
+    role: Documentation host (Docusaurus)
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+    note: >-
+      Returns the Docusaurus 404 HTML page with a genuine 404 status code.
+  - host: www.every.org
+    role: Marketing / product host
+    documents:
+      - path: /.well-known/security.txt
+        status: 429
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 429
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 429
+        file: null
+      - path: /.well-known/api-catalog
+        status: 429
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 429
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 429
+        file: null
+      - path: /.well-known/agent.json
+        status: 429
+        file: null
+    note: >-
+      Every path on this host returned HTTP 429 with a "Vercel Security Checkpoint" HTML body.
+      That is a uniform bot challenge applied to the whole host, not evidence about any specific
+      path. Recorded as indeterminate on www.every.org; the two hosts that answered honestly both
+      404 on every path.
+agent_card:
+  found: false
+  note: >-
+    No A2A agent card at either the canonical /.well-known/agent-card.json or the legacy
+    /.well-known/agent.json on any host. No a2a/ artifact is written — this pipeline never
+    authors an agent card on a provider's behalf.
+oauth_metadata:
+  found: false
+  note: >-
+    Consistent with authentication/every-org-authentication.yml: Every.org uses API keys only,
+    so there is no authorization server to describe.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

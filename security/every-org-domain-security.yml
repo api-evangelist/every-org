@@ -1,4 +1,4 @@
-generated: '2026-07-11'
+generated: '2026-08-28'
 method: probed
 source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
 hosts:
@@ -6,22 +6,35 @@ hosts:
   https: true
   tls_version: TLSv1.3
   cert_expires: Oct  8 09:33:01 2026 GMT
-  hsts: null
+  hsts: unknown
+  note: >-
+    www.every.org is fronted by a Vercel bot challenge and returned HTTP 429
+    ("Vercel Security Checkpoint") to every unauthenticated probe on 2026-08-28,
+    so response headers could not be read. Not a finding about the provider.
 - host: partners.every.org
   https: true
   tls_version: TLSv1.3
-  cert_expires: Aug 19 01:54:29 2026 GMT
+  cert_expires: Oct 17 02:22:30 2026 GMT
+  hsts: max-age=15552000; includeSubDomains; preload
+  hsts_note: >-
+    Observed directly on GET https://partners.every.org/ (HTTP 404) and on
+    GET https://partners.every.org/v0.2/search/pets (HTTP 400). The automated
+    probe recorded null because it only reads headers from 2xx responses; the
+    API host answers no unauthenticated 2xx.
+- host: docs.every.org
+  https: true
   hsts: null
+  note: Docusaurus documentation host; probed 2026-08-28.
 domains:
 - domain: every.org
   dnssec: true
   caa:
+  - 0 issue "comodoca.com"
   - 0 issue "digicert.com; cansignhttpexchanges=yes"
   - 0 issue "letsencrypt.org"
   - 0 issue "pki.goog; cansignhttpexchanges=yes"
   - 0 issue "ssl.com"
   - 0 issuewild "comodoca.com"
-  - 0 issuewild "digicert.com; cansignhttpexchanges=yes"
   spf: true
   dmarc: true
   dmarc_policy: reject

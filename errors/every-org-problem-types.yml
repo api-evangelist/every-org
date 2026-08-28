@@ -1,0 +1,70 @@
+generated: '2026-08-28'
+method: probed
+source: >-
+  live probes of https://partners.every.org/v0.2/* (2026-08-28) plus
+  https://docs.every.org/docs/endpoints/authentication
+provider: Every.org
+providerId: every-org
+format: plain-text
+rfc9457: false
+problem_json: false
+error_catalog_published: false
+description: >-
+  Every.org publishes no error reference for the Partner (Charity) API. There is no error-code
+  page in the documentation, no error object schema, and no application/problem+json response.
+  Every error observed on the live API is a bare plain-text string. The entries below are
+  observed responses, each with the exact request that produced it — nothing here is inferred
+  from a spec, because there is no spec.
+envelope:
+  content_type: text/plain;charset=UTF-8
+  shape: bare string
+  fields: []
+  note: >-
+    No code, type, title, detail, instance, or request-id field. A client cannot programmatically
+    distinguish one 400 from another except by string-matching the body, and Every.org publishes
+    no list of those strings.
+problem_types:
+  - id: api-key-missing
+    status: 400
+    body: API key missing
+    content_type: text/plain;charset=UTF-8
+    title: API key missing
+    cause: >-
+      A request was made to an endpoint requiring a public key without the `apiKey` query
+      parameter.
+    remediation: >-
+      Append ?apiKey={publicKey} to the request, or authenticate with HTTP Basic
+      (publicKey:privateKey) for private-key endpoints.
+    observed_request: GET https://partners.every.org/v0.2/search/pets
+    probed: '2026-08-28'
+    note: >-
+      Notable deviation: a missing credential returns 400 Bad Request, not 401 Unauthorized, and
+      carries no WWW-Authenticate header. An agent applying standard HTTP semantics will classify
+      this as a malformed request rather than an auth failure and may not retry with credentials.
+  - id: not-found
+    status: 404
+    body: Not found
+    content_type: text/plain;charset=UTF-8
+    title: Not found
+    cause: >-
+      The requested path does not exist on the API host. Returned for unknown routes including
+      the host root.
+    remediation: Check the path against https://docs.every.org/docs/endpoints/nonprofits.
+    observed_request: GET https://partners.every.org/
+    probed: '2026-08-28'
+undocumented:
+  - >-
+    The response for an invalid (as opposed to missing) API key was not observed — probing one
+    would require submitting a credential, which this pipeline does not do.
+  - >-
+    The status code and body returned when a published rate limit is exceeded are not documented
+    and were not observed.
+  - >-
+    No error semantics are documented for POST /v0.2/fundraiser — validation failures, duplicate
+    titles, and unknown nonprofitId all have undocumented behaviour.
+  - >-
+    No error contract is documented for webhook delivery: the response status Every.org expects
+    from a subscriber endpoint, and its behaviour on a non-2xx, are both unpublished.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

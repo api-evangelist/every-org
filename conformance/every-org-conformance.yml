@@ -1,0 +1,144 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/endpoints/nonprofits, https://docs.every.org/docs/webhooks/,
+  https://docs.every.org/docs/types, live probes of partners.every.org (2026-08-28)
+provider: Every.org
+providerId: every-org
+description: >-
+  Cross-cutting and domain-standard conformance for the Every.org Partner (Charity) API, asserted
+  only where the API's own documented payloads or observed responses carry the evidence. Every.org
+  publishes no compliance program, certification list, or trust center, so no Compliance pointer
+  is emitted.
+standards:
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      API-key authentication only (apiKey query parameter and HTTP Basic). No
+      /.well-known/oauth-authorization-server on any host (404 on partners.every.org and
+      docs.every.org, 2026-08-28).
+  - id: oidc
+    conforms: false
+    evidence: /.well-known/openid-configuration returns 404 on every Every.org host.
+  - id: rfc9457
+    conforms: false
+    evidence: >-
+      Errors are bare plain text (text/plain;charset=UTF-8, body "API key missing" / "Not found").
+      No application/problem+json response was observed or documented.
+  - id: rfc9116
+    name: security.txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 on partners.every.org and docs.every.org.
+  - id: rfc8594
+    name: Sunset header
+    conforms: false
+    evidence: No Sunset or Deprecation header usage is documented or observed.
+  - id: pagination
+    conforms: partial
+    evidence: >-
+      Page-number pagination with a pagination{page,pages,page_size,total_results} envelope on
+      GET /v0.2/browse/{cause}. Not applied to search, which is capped at take=50 with no
+      pagination block. No Link header, no cursor.
+  - id: idempotency
+    conforms: false
+    evidence: >-
+      The one write operation, POST /v0.2/fundraiser, documents no idempotency key and no
+      deduplication behaviour.
+  - id: json-api
+    conforms: false
+    evidence: >-
+      No application/vnd.api+json media type, no type/attributes/relationships envelope. The
+      details endpoint uses a bespoke data{} wrapper; search and browse do not.
+  - id: hsts
+    name: RFC 6797 HSTS
+    conforms: true
+    evidence: >-
+      partners.every.org returns strict-transport-security: max-age=15552000; includeSubDomains;
+      preload (observed 2026-08-28).
+  - id: cors
+    conforms: true
+    evidence: >-
+      partners.every.org returns access-control-allow-origin: * (observed 2026-08-28), consistent
+      with Every.org's documented recommendation to call the search endpoint client-side.
+domain_standards:
+  note: >-
+    Nonprofit / charitable-giving sector. These are the standards a nonprofit-data consumer
+    already speaks, and Every.org's contract declares them in its own payloads rather than only
+    claiming them in marketing prose.
+  standards:
+    - id: irs-ntee
+      name: National Taxonomy of Exempt Entities (NTEE)
+      body: National Center for Charitable Statistics / IRS
+      conforms: true
+      declared_in: >-
+        Nonprofit details response fields `nteeCode` (e.g. "D20") and `nteeCodeMeaning`
+        {majorCode: "D", majorMeaning: "Animal Related", decileCode: "D20", decileMeaning:
+        "Animal Protection and Welfare"}.
+      evidence: https://docs.every.org/docs/endpoints/nonprofits#response-types
+      buyer_impact: >-
+        A consumer already indexing nonprofits by NTEE decile can join Every.org data with IRS
+        Business Master File and Form 990 data with no bespoke mapping table.
+    - id: irs-ein
+      name: IRS Employer Identification Number
+      body: US Internal Revenue Service
+      conforms: true
+      declared_in: >-
+        `ein` is a first-class lookup key: GET /v0.2/nonprofit/{ein} accepts a 9-digit EIN as an
+        identifier alongside slug and UUID, and `ein` is returned on the details, search, browse
+        and webhook payloads.
+      evidence: https://docs.every.org/docs/endpoints/nonprofits
+      format_note: >-
+        9 digits, no dashes, no "ein:" prefix — documented explicitly in the 2026-06-16 changelog
+        entry. Undefined for fiscally sponsored organizations.
+      buyer_impact: >-
+        EIN is the universal join key for US nonprofit data (IRS BMF, Form 990, GuideStar/Candid,
+        ProPublica Nonprofit Explorer). Accepting it as a path identifier means no resolution
+        step is needed.
+    - id: iso-4217
+      name: ISO 4217 currency codes
+      conforms: true
+      declared_in: >-
+        Webhook payload `currency` is documented as "Currency code as defined in ISO 4217", and
+        `amount` is "in the unit defined by the ISO currency code".
+      evidence: https://docs.every.org/docs/webhooks/
+      scope_note: The Fundraisers API currently supports only "USD".
+    - id: iso-8601
+      name: ISO 8601 date-time
+      conforms: true
+      declared_in: >-
+        POST /v0.2/fundraiser documents startDate and endDate as "An ISO-encoded datetime
+        string"; webhook donationDate is ISO 8601 in the published example
+        ("2022-02-03T05:00:16.175Z").
+      evidence: https://docs.every.org/docs/endpoints/fundraisers
+    - id: 501c3
+      name: IRS 501(c)(3) tax-exempt status
+      conforms: true
+      declared_in: >-
+        Every.org states the Nonprofits API searches "over 1 million 501(c)(3) organizations",
+        and the details response carries `isDisbursable` to indicate whether Every.org can
+        actually disburse to the organization.
+      evidence: https://docs.every.org/docs/intro
+  not_applicable:
+    - id: fdx
+      reason: Not an open-banking data provider.
+    - id: psd2
+      reason: US nonprofit platform; no European payment-initiation surface.
+    - id: fhir
+      reason: Not a healthcare data provider.
+    - id: scim
+      reason: No identity/provisioning surface.
+    - id: odata
+      reason: Bespoke REST; no $metadata document.
+certifications:
+  published: none-found
+  trust_center: none-found
+  evidence: >-
+    probe-security-programs.py returned vdp=none trust=none on 2026-08-28. No SOC 2, ISO 27001,
+    PCI DSS, or HIPAA claim was found on any Every.org host reachable to an unauthenticated
+    crawler. Payment card handling is delegated to third-party processors, which is where PCI
+    scope sits; Every.org does not publish an attestation of its own.
+compliance_pointer_withheld: >-
+  No `type: Compliance` pointer is emitted in apis.yml. Nothing was found to back it.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

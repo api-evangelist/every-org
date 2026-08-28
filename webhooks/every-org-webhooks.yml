@@ -1,0 +1,151 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/webhooks/,
+  https://docs.every.org/docs/webhooks/nonprofit-webhook,
+  https://docs.every.org/docs/webhooks/partner-webhook
+provider: Every.org
+providerId: every-org
+description: >-
+  Every.org's event surface. Every.org publishes no AsyncAPI, CloudEvents, or event-catalog
+  document — no /asyncapi.yaml or /asyncapi.json is served on any Every.org host — but it does
+  document two production webhooks in full, including the complete payload field list. This
+  artifact is the webhook catalog captured from those pages. It is deliberately NOT an authored
+  AsyncAPI: the pipeline saves real event specs verbatim and does not fabricate one on a
+  provider's behalf.
+asyncapi_published: false
+transport: HTTPS POST from Every.org to a subscriber-supplied URL
+payload_encoding: JSON
+delivery_semantics:
+  documented: false
+  note: >-
+    Retries, ordering, at-least-once vs at-most-once delivery, timeout, and expected response
+    status are not documented. Not asserted.
+signing:
+  documented: false
+  note: >-
+    No signature header, shared secret, or verification procedure is documented for either
+    webhook. A subscriber has no published way to verify a payload actually came from Every.org.
+    Recorded as an observed gap, not a security claim.
+events:
+  - id: nonprofit-donation
+    name: Nonprofit Donation Webhook
+    docs: https://docs.every.org/docs/webhooks/nonprofit-webhook
+    trigger: A donation to the subscribing nonprofit is completed
+    audience: Nonprofit administrators
+    subscribe_via: >-
+      every.org/{organization-slug}/admin/settings, under "Advanced settings"
+    common_use_case: >-
+      Custom integration between Every.org and a donor CRM (Every.org's own stated example).
+    contact: team@every.org
+  - id: partner-donation
+    name: Partner Webhook
+    docs: https://docs.every.org/docs/webhooks/partner-webhook
+    trigger: A donation is completed through the partner's Donate Link or Donate Button
+    audience: Developers / partners using the Donate Link
+    subscribe_via: The Every.org developer dashboard (requires an Every.org account)
+    staging: >-
+      Staging-environment webhooks are available for testing but require an explicit email
+      verification after account creation.
+    contact: partners@every.org
+payload:
+  shared: true
+  note: >-
+    Both webhooks send the same JSON body minus a few fields. `designation` is documented on the
+    Nonprofit Donation Webhook; `partnerMetadata` is documented on the Partner Webhook.
+  fields:
+    - name: chargeId
+      type: string
+      description: Unique ID for the donation; matches the "Charge ID" shown in the nonprofit Admin Dashboard.
+    - name: partnerDonationId
+      type: string | undefined
+      description: Partner donation ID supplied via the Donate Link or Donate Button; undefined if not specified.
+    - name: partnerMetadata
+      type: object | undefined
+      description: Partner metadata, base64-decoded and JSON-parsed, as supplied on the Donate Link or Donate Button. Partner Webhook only.
+    - name: designation
+      type: string | undefined
+      description: The program or project this donation is intended to support. Nonprofit Donation Webhook only.
+    - name: firstName
+      type: string | undefined
+      description: Undefined if the donor chose not to share this with the nonprofit.
+    - name: lastName
+      type: string | undefined | null
+      description: Undefined if withheld by the donor; null if the donor has no last name.
+    - name: email
+      type: string | null
+      description: Null if the donor has no associated email; withheld if the donor chose not to share it.
+    - name: toNonprofit
+      type: object
+      description: Receiving nonprofit.
+      members:
+        - name: slug
+          type: string
+          description: Slug identifying the nonprofit; the profile URL is every.org/{slug}.
+        - name: ein
+          type: string | undefined
+          description: The nonprofit's EIN; undefined where the receiving organization has none, as with fiscally sponsored organizations.
+        - name: name
+          type: string
+          description: The nonprofit's displayable name.
+    - name: amount
+      type: string
+      description: Numerical amount in the unit defined by the ISO 4217 currency code, represented as a string.
+    - name: netAmount
+      type: string
+      description: Net amount of the donation after subtracting third-party fees.
+    - name: currency
+      type: string
+      description: Currency code as defined in ISO 4217.
+    - name: frequency
+      type: enum
+      values:
+        - Yearly
+        - Monthly
+        - One-time
+    - name: donationDate
+      type: string (date-time)
+      description: Date the donation was initiated. ISO 8601 in the published example.
+    - name: publicTestimony
+      type: string | undefined
+      description: Publicly shareable comment written by the donor, shown on every.org.
+    - name: privateNote
+      type: string | undefined
+      description: Private note for the nonprofit written by the donor.
+    - name: fromFundraiser
+      type: object | undefined
+      description: The fundraiser the donation came through, when applicable.
+      members:
+        - name: id
+          type: string
+        - name: title
+          type: string
+        - name: slug
+          type: string
+          description: URL is every.org/{toNonprofit.slug}/f/{fromFundraiser.slug}.
+    - name: paymentMethod
+      type: string
+      description: The method used to make the payment.
+  example:
+    chargeId: somerandomuuid
+    partnerDonationId: somerandomuuid
+    firstName: Jane
+    lastName: Doe
+    email: jane@emailprovider.org
+    toNonprofit:
+      slug: givedirectly
+      ein: '271661997'
+      name: Give Directly
+    amount: '1000.00'
+    netAmount: '970.07'
+    currency: USD
+    frequency: Monthly
+    donationDate: '2022-02-03T05:00:16.175Z'
+    publicTestimony: I love animals
+    privateNote: Thank you for the fantastic work!
+pii_note: >-
+  These payloads carry donor personal data (name, email, private note). The example above is
+  Every.org's own published sample, not real donor data.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

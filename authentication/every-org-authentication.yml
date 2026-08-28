@@ -1,0 +1,72 @@
+generated: '2026-08-28'
+method: searched
+source: https://docs.every.org/docs/endpoints/authentication
+provider: Every.org
+providerId: every-org
+docs: https://docs.every.org/docs/endpoints/authentication
+description: >-
+  Every.org's Partner (Charity) API authenticates with two classes of API key issued from the
+  Every.org developer dashboard. Public keys authorize read access to publicly available nonprofit
+  data and are passed as a URL query parameter; private keys authorize privileged account actions
+  and are presented over HTTP Basic authentication with a public key as the username. There is no
+  OAuth 2.0, OpenID Connect, or mutual-TLS surface — no /.well-known/oauth-authorization-server or
+  /.well-known/openid-configuration document is served on any Every.org host (all probed 404 on
+  2026-08-28).
+key_issuance:
+  console: https://www.every.org/charity-api
+  note: >-
+    Keys are generated from the developer dashboard after creating an Every.org account at
+    every.org/charity-api. Private keys are shown ONCE at generation and are not retrievable
+    afterwards.
+schemes:
+  - id: publicKeyQuery
+    type: apiKey
+    in: query
+    name: apiKey
+    label: Public key
+    description: >-
+      Required to query publicly accessible data. Endpoints that accept only public-key
+      authentication accept GET requests only. Public keys are explicitly documented as safe for
+      both server-side and public-facing client-side use, though Every.org reserves the right to
+      block a key for inappropriate usage.
+    secret: false
+    applies_to:
+      - GET /v0.2/nonprofit/{identifier}
+      - GET /v0.2/search/{searchTerm}
+      - GET /v0.2/browse/{cause}
+      - GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}
+      - GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}/raised
+    example: https://partners.every.org/v0.2/search/pets?apiKey=REDACTED_PUBLIC_KEY
+  - id: privateKeyBasic
+    type: http
+    scheme: basic
+    label: Private key
+    description: >-
+      Required for privileged, account-scoped writes. Username is any public key associated with
+      the account; password is a private key associated with the same account. Documented as
+      "must be kept out of publicly-accessible areas like client-side applications or version
+      control".
+    secret: true
+    username: public key
+    password: private key
+    applies_to:
+      - POST /v0.2/fundraiser
+transport:
+  https_required: true
+  hsts: max-age=15552000; includeSubDomains; preload
+missing_on_401:
+  observed: >-
+    An unauthenticated GET https://partners.every.org/v0.2/search/pets returns HTTP 400 with the
+    plain-text body "API key missing" — not 401, and not a structured error object.
+  probed: '2026-08-28'
+oauth: false
+oidc: false
+mtls: false
+scopes:
+  supported: false
+  note: >-
+    Key-auth only. There is no scope or permission surface to enumerate, so no scopes/ artifact
+    is emitted (per the pipeline's OAuth-only rule for scopes).
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

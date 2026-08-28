@@ -1,0 +1,67 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/endpoints/nonprofits, https://docs.every.org/docs/changelog,
+  https://status.every.org/ (probed 2026-08-28, HTTP 200)
+provider: Every.org
+providerId: every-org
+description: >-
+  Operational lifecycle posture for the Every.org Partner (Charity) API, read from the provider's
+  own surfaces. Every.org runs a public status page and a dated changelog; it publishes no
+  versioning policy, no deprecation policy, and no SLA.
+versioning:
+  style: uri-path
+  current: v0.2
+  declared: >-
+    "Current version: v0.2" appears on both the Nonprofits and Fundraisers endpoint pages.
+  policy_published: false
+  supported_versions_published: false
+  history: >-
+    v0.2 has been the current version across every dated changelog entry from 2023-02-21 through
+    2026-06-16. No v0.1 or v1 surface is documented or reachable.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  detail: >-
+    No deprecation policy, notice period, or Sunset/Deprecation header usage is documented, and
+    no operation is marked deprecated anywhere in the documentation. The single observed rename
+    (the `tags` search parameter to `causes`) was shipped with the old name retained indefinitely
+    for backwards compatibility, which is the only deprecation-adjacent commitment published.
+  deprecated_operations: []
+status_page:
+  present: true
+  url: https://status.every.org/
+  http_status: 200
+  probed: '2026-08-28'
+  title: Every.org Status
+  detail: >-
+    A live hosted status page listing service components with a "Last updated / next update in
+    N sec" refresh. Component state is rendered client-side, so per-service history was not read.
+  incident_history_feed: not-published
+sla:
+  published: false
+  uptime_target: null
+  support_response_target: null
+  note: >-
+    No SLA, uptime commitment, or support response target is published for the API. Every.org's
+    stated posture is "We strive to keep this API open and available for use without
+    restrictions", which is an intent, not a commitment.
+support:
+  channels:
+    - type: HelpCenter
+      url: https://support.every.org/hc/en-us
+    - type: Email
+      url: mailto:partners@every.org
+      scope: Partner / API questions, higher rate-limit requests
+    - type: Email
+      url: mailto:team@every.org
+      scope: Nonprofit Donation Webhook questions
+changelog:
+  present: true
+  url: https://docs.every.org/docs/changelog
+  see: changelog/every-org-changelog.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

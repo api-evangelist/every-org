@@ -7,56 +7,64 @@ apis:
   - Charities
   - Donations
   - Fundraising
+  - Nonprofits
+  - Philanthropy
   humanURL: https://www.every.org
   baseURL: https://partners.every.org/v0.2
   properties:
   - url: https://docs.every.org
     type: Documentation
-  - url: https://partners.every.org
-    type: Reference
   - url: https://www.every.org
     type: Website
-  - url: graphql/every-org-graphql.md
-    type: GraphQL
-  description: The Every.org API is a powerful tool that allows developers to access
-    and interact with a wide range of charitable giving data. By integrating the API
-    into their applications, developers can retrieve information about nonprofit organizations,
-    fundraising events, and volunteer opportunities. This data can be used to create
-    innovative solutions that connect individuals with causes they care about, facilitate
-    online donations, and promote community engagement.
+  description: The Every.org API is a powerful tool that allows developers to access and interact with
+    a wide range of charitable giving data. By integrating the API into their applications, developers
+    can retrieve information about nonprofit organizations, fundraising events, and volunteer opportunities.
+    This data can be used to create innovative solutions that connect individuals with causes they care
+    about, facilitate online donations, and promote community engagement.
 name: Every.org
 tags:
 - Charities
 - Donations
 - Fundraising
+- Nonprofits
+- Philanthropy
+- Webhooks
+- Giving
 type: Index
 accessModel:
-  pricing: freemium
-  onboarding: unknown
+  pricing: free
+  onboarding: self-service
   trial: false
   try_now: false
-  public: false
-  label: Freemium
-  confidence: medium
+  public: true
+  label: Free (non-commercial)
+  confidence: high
   source:
-  - plans
-  generated: '2026-07-22'
-  method: derived
+  - https://www.every.org/charity-api
+  - plans/every-org-plans-pricing.yml
+  generated: '2026-08-28'
+  method: searched
+  note: 'Free for non-commercial use, self-serve: create an Every.org account at every.org/charity-api
+    and generate public and private keys from the developer dashboard. No trial, because there is nothing
+    to trial - the free tier is the product. Commercial/for-profit use is a sales conversation with no
+    published price. Replaces the 2026-07-22 derived freemium classification, which was inferred from
+    the invented three-tier plans scaffold that this pass removed.'
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/every-org.png
 access: 3rd-Party
 created: '2025-03-01'
-modified: '2026-03-16'
+modified: '2026-08-28'
 position: Consumer
-description: Every.org is a platform that empowers individuals to give back and support
-  causes they care about. Users can create fundraising campaigns, donate to verified
-  nonprofits, and track their impact through personalized giving dashboards. Every.org
-  also partners with companies to facilitate workplace giving programs and corporate
-  social responsibility initiatives.
+description: Every.org is a platform that empowers individuals to give back and support causes they care
+  about. Users can create fundraising campaigns, donate to verified nonprofits, and track their impact
+  through personalized giving dashboards. Every.org also partners with companies to facilitate workplace
+  giving programs and corporate social responsibility initiatives.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 specificationVersion: '0.23'
 common:
+- type: Website
+  url: https://www.every.org/
 - type: DomainSecurity
   url: security/every-org-domain-security.yml
 - type: GitHubOrganization
@@ -75,7 +83,60 @@ common:
   description: 'null'
   url: https://www.every.org/press
   type: PressReleases
-- name: Every.org
-  description: 'null'
-  url: https://support.every.org/hc/en-us
-  type: Support
+- type: DeveloperPortal
+  url: https://www.every.org/charity-api
+  name: Every.org Charity API
+- type: APIReference
+  url: https://docs.every.org/docs/endpoints/nonprofits
+  name: Every.org API endpoint reference
+- type: GettingStarted
+  url: https://docs.every.org/docs/intro
+  name: Every.org API introduction
+- type: Pricing
+  url: https://www.every.org/pricing
+  name: Every.org pricing
+- type: SignUp
+  url: https://www.every.org/charity-api
+  name: Create an account and generate API keys
+- type: TermsOfService
+  url: https://www.every.org/terms
+  name: Every.org Terms of Service
+- type: PrivacyPolicy
+  url: https://www.every.org/privacy
+  name: Every.org Privacy Policy
+- type: StatusPage
+  url: https://status.every.org/
+  name: Every.org Status
+- type: ChangeLog
+  url: changelog/every-org-changelog.yml
+- type: Lifecycle
+  url: lifecycle/every-org-lifecycle.yml
+- type: Authentication
+  url: authentication/every-org-authentication.yml
+- type: Conventions
+  url: conventions/every-org-conventions.yml
+- type: RateLimits
+  url: rate-limits/every-org-rate-limits.yml
+- type: Plans
+  url: plans/every-org-plans-pricing.yml
+- type: Webhooks
+  url: webhooks/every-org-webhooks.yml
+- type: ErrorCatalog
+  url: errors/every-org-problem-types.yml
+- type: DataModel
+  url: data-model/every-org-data-model.yml
+- type: Conformance
+  url: conformance/every-org-conformance.yml
+- type: Packages
+  url: packages/every-org-packages.yml
+- type: Components
+  url: components/every-org-components.yml
+- type: Sandbox
+  url: sandbox/every-org-sandbox.yml
+- type: LLMsTxt
+  url: llms/every-org-llms.txt
+x-enrichment:
+  date: '2026-08-28'
+  status: enriched
+  artifacts_added: 15
+  pass: local-v1

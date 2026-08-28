@@ -4,87 +4,95 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Every.org
 providerId: every-org
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
+generated: '2026-08-28'
+method: searched
+source: https://docs.every.org/docs/endpoints/nonprofits#rate-limits
+modified: '2026-08-28'
 tags:
   - Charities
   - Donations
   - Fundraising
   - Rate Limiting
   - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the Every.org API surface. Captures per-tier
-  quotas, burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to
-  be replaced with published provider limits.
+description: >-
+  Rate limits Every.org publishes for its Partner (Charity) API. Replaces the 2026-05-04 generated
+  scaffold: the tiered per-minute/per-month figures in that scaffold were invented defaults and did
+  not correspond to anything Every.org publishes. Every.org's real model is per-endpoint,
+  per-API-key, with no tiers and no monthly quota. Verbatim framing from the docs: "We strive to
+  keep this API open and available for use without restrictions. However in order to prevent abuse
+  we apply the following limits to each endpoint by default."
+limit_count: 3
 headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
+  limit: null
+  remaining: null
+  reset: null
+  retryAfter: null
+  policy: null
+  observed: none
+  note: >-
+    No rate-limit response headers are documented, and none were present on live unauthenticated
+    responses probed 2026-08-28 (HTTP 400 on /v0.2/search/pets, HTTP 404 on /). Only Cloudflare
+    edge headers (cf-ray, alt-svc) are returned. The published numbers are readable by a human
+    from the docs but are not machine-readable at runtime.
 responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
+  throttled: unknown
+  note: >-
+    Every.org does not document the status code returned when a limit is exceeded, and it could
+    not be observed without a valid key. Not asserted.
 limits:
-  - tier: free
-    name: Free Tier Default
+  - name: Nonprofit details
     scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - Every.org API
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - Every.org API
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
+    per_endpoint: GET /v0.2/nonprofit/{identifier}
     metric: requests_per_minute
     limit: 100
-    burst: 200
     timeFrame: minute
+    burst: null
     applies:
       - Every.org API
-  - tier: professional
-    name: Professional Tier Monthly Quota
+    source: https://docs.every.org/docs/endpoints/nonprofits#rate-limits
+  - name: Nonprofit search
     scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - Every.org API
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
+    per_endpoint: GET /v0.2/search/{searchTerm}
     metric: requests_per_minute
-    limit: 1000
-    burst: 5000
+    limit: 500
     timeFrame: minute
+    burst: null
     applies:
       - Every.org API
+    source: https://docs.every.org/docs/endpoints/nonprofits#rate-limits
+    note: >-
+      Every.org explicitly designs this endpoint for high throughput and recommends calling it
+      client-side on every keystroke for type-ahead nonprofit search.
+  - name: Nonprofit browse
+    scope: api-key
+    per_endpoint: GET /v0.2/browse/{cause}
+    metric: requests_per_minute
+    limit: 500
+    timeFrame: minute
+    burst: null
+    applies:
+      - Every.org API
+    source: https://docs.every.org/docs/endpoints/nonprofits#rate-limits
+undocumented_endpoints:
+  endpoints:
+    - GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}
+    - GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}/raised
+    - POST /v0.2/fundraiser
+  note: >-
+    The published rate-limit table covers only the three Nonprofits endpoints. No limit is stated
+    for the Fundraisers endpoints. Absence of a published figure is recorded, not guessed.
 policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+  - name: Higher limits
+    description: >-
+      "If you need higher rate limits, please contact us at partners@every.org." There is no
+      self-serve tier and no published paid ceiling.
+    contact: partners@every.org
+    source: https://docs.every.org/docs/endpoints/nonprofits#rate-limits
+  - name: Result-size caps
+    description: >-
+      Independent of request rate, response size is capped: search take max 50, browse take max
+      100 per page.
+    source: https://docs.every.org/docs/endpoints/nonprofits
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

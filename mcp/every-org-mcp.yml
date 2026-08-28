@@ -1,0 +1,92 @@
+generated: '2026-08-28'
+method: derived
+source: >-
+  https://docs.every.org/docs/endpoints/nonprofits, https://docs.every.org/docs/endpoints/fundraisers
+  (candidate tools); live probes of mcp.every.org, partners.every.org/mcp, www.every.org/mcp
+provider: Every.org
+providerId: every-org
+status: candidate
+description: >-
+  Every.org ships NO MCP server. This file records that finding and sketches what a server over
+  the documented Partner API would expose, so the gap is legible. It is a candidate only: no
+  apis.yml `type: MCPServer` pointer is emitted, because emitting one would credit Every.org with
+  an agent surface it does not operate.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  verified: probed
+discovery:
+  probes:
+    - url: https://mcp.every.org/mcp
+      result: NXDOMAIN
+      note: Host does not resolve.
+    - url: https://partners.every.org/mcp
+      status: 404
+    - url: https://www.every.org/mcp
+      status: 429
+      note: Vercel bot challenge on the whole host; indeterminate for this path specifically.
+    - registry: modelcontextprotocol/servers and general web search
+      result: no Every.org server found
+  checked: '2026-08-28'
+  note: >-
+    Third-party nonprofit MCP servers exist (Benevity's nonprofit server, community servers over
+    CharityAPI.org and IRS Form 990 data), but none is published by Every.org and none wraps the
+    Every.org Partner API.
+candidate_tools:
+  note: >-
+    Derived from Every.org's documented REST operations. Input schemas are transcribed from the
+    published parameter documentation, not from a machine-readable spec — Every.org publishes no
+    OpenAPI, so a real server would need one authored first.
+  tools:
+    - name: search_nonprofits
+      rest: GET /v0.2/search/{searchTerm}
+      auth: public key
+      inputs:
+        - { name: searchTerm, type: string, required: true, in: path }
+        - { name: take, type: integer, required: false, maximum: 50 }
+        - { name: causes, type: string, required: false, note: comma-joined, OR semantics }
+      consequence: read-only
+    - name: get_nonprofit
+      rest: GET /v0.2/nonprofit/{identifier}
+      auth: public key
+      inputs:
+        - { name: identifier, type: string, required: true, note: slug, 9-digit EIN, or UUID }
+      consequence: read-only
+    - name: browse_nonprofits_by_cause
+      rest: GET /v0.2/browse/{cause}
+      auth: public key
+      inputs:
+        - { name: cause, type: string, required: true, vocabulary: https://docs.every.org/docs/types }
+        - { name: take, type: integer, required: false, maximum: 100 }
+        - { name: page, type: integer, required: false }
+      consequence: read-only
+    - name: get_fundraiser
+      rest: GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}
+      auth: public key
+      consequence: read-only
+    - name: get_fundraiser_raised
+      rest: GET /v0.2/nonprofit/{nonprofitIdentifier}/fundraiser/{fundraiserIdentifier}/raised
+      auth: public key
+      consequence: read-only
+    - name: create_fundraiser
+      rest: POST /v0.2/fundraiser
+      auth: private key (HTTP Basic)
+      consequence: write
+      irreversible: true
+      warning: >-
+        No documented reversal, no idempotency key. A retried call must be assumed to create a
+        duplicate public fundraiser that cannot be removed through the API. Any real server
+        should gate this behind explicit human confirmation.
+      see: conventions/every-org-conventions.yml
+blocking_gaps:
+  - No OpenAPI or JSON Schema to generate tool input schemas from.
+  - No idempotency key on the single write operation.
+  - No documented reversal path for a created fundraiser.
+  - No machine-readable rate-limit headers, so a server cannot back off on signal.
+  - Errors are unstructured plain text, so a server cannot classify failures.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

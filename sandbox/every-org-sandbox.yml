@@ -1,0 +1,63 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://docs.every.org/docs/webhooks/partner-webhook,
+  https://github.com/everydotorg/donate-button (README),
+  https://docs.every.org/docs/donate-link
+provider: Every.org
+providerId: every-org
+description: >-
+  Every.org runs a separate staging environment that partners can use to exercise the donate flow
+  and webhook delivery before going live. It is a full parallel environment reached at a different
+  hostname, not a test mode toggled on the production API, and Every.org publishes no test cards,
+  test bank accounts, magic identifiers, fixtures, triggers, or time-simulation tooling.
+mode: separate-environment
+environments:
+  - name: production
+    api_base: https://partners.every.org/v0.2
+    web: https://www.every.org
+    donate_link: https://www.every.org/{nonprofitSlug}#/donate
+  - name: staging
+    web: https://staging.every.org
+    donate_link: https://staging.every.org/{nonprofitSlug}#/donate
+    api_base: not-documented
+    note: >-
+      Every.org documents staging for the donate flow and for webhooks. It does not document a
+      staging base URL for the Partner REST API, so no api_base is asserted. staging.every.org
+      answered HTTP 429 ("Vercel Security Checkpoint") to an unauthenticated crawler probe on
+      2026-08-28 — a bot policy on the edge, not a missing environment.
+key_prefixes:
+  documented: false
+  note: >-
+    Every.org distinguishes public keys from private keys by role and by how they are presented
+    (query parameter vs HTTP Basic password), not by a published prefix convention. No
+    live-vs-test key prefix is documented, which means a key's environment cannot be told from
+    the key itself.
+access:
+  donate_button: 'Pass staging: true to everyDotOrgDonateButton.createButton / createWidget.'
+  donate_link: Use a staging.every.org link in place of a www.every.org link.
+  webhooks: >-
+    "Staging environment webhooks are also available to test, but requires an explicit email
+    verification after account creation."
+    (https://docs.every.org/docs/webhooks/partner-webhook)
+test_data:
+  test_cards: not-published
+  test_bank_accounts: not-published
+  magic_identifiers: not-published
+  fixtures: not-published
+  triggers: not-published
+  time_simulation: not-published
+  note: >-
+    No published test values of any kind. Nothing is invented here. A partner testing a donation
+    in staging must arrange their own payment instrument through whatever the staging processor
+    accepts, which Every.org does not document.
+public_read_playground:
+  note: >-
+    Production reads are effectively self-testable without a sandbox: the Nonprofits endpoints
+    take a public key that Every.org explicitly says is safe to expose client-side, so
+    GET /v0.2/search/{term}?apiKey=... can be exercised straight from a browser. Every.org's own
+    docs point at https://www.every.org/new and https://givingmultiplier.org/ as live examples of
+    the search endpoint in production use.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

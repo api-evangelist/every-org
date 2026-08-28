@@ -1,0 +1,87 @@
+generated: '2026-08-28'
+method: searched
+source: >-
+  https://registry.npmjs.org/, https://api.github.com/orgs/everydotorg/repos,
+  https://github.com/everydotorg/donate-button, https://embeds.every.org/0.4/button.js
+provider: Every.org
+providerId: every-org
+description: >-
+  First-party distributable code published by Every.org. The finding here is a gap, not an
+  inventory: Every.org ships NO client library for its Partner (Charity) API in any language, on
+  any registry. npm, PyPI, RubyGems, Packagist, crates.io, NuGet, Maven Central and pkg.go.dev
+  carry no Every.org API client. The only first-party distributables are a CDN-delivered embed
+  bundle (the open-source Donate Button) and one npm package that is a fork of a third-party
+  PayPal component, not an Every.org API SDK. The documentation's own integration examples are
+  raw `fetch` and `curl` calls against https://partners.every.org/v0.2.
+api_sdk_count: 0
+registries_searched:
+  - npm
+  - PyPI
+  - RubyGems
+  - Packagist
+  - crates.io
+  - NuGet
+  - Maven Central
+  - pkg.go.dev
+packages:
+  - name: '@everydotorg/donate-button-v4'
+    official: true
+    kind: embeddable-component
+    is_api_client: false
+    registry: cdn
+    registry_url: null
+    version: 0.4.0
+    published: null
+    source_repo: https://github.com/everydotorg/donate-button
+    license: see LICENSE.md in the repository
+    distribution: https://embeds.every.org/0.4/button.js
+    install: '<script async defer src="https://embeds.every.org/0.4/button.js"></script>'
+    description: >-
+      The open-source Every.org Donate Button — a drop-in donation and peer-to-peer fundraising
+      widget that opens the Every.org donation flow. Accepts card, crypto, stock, DAF and mobile
+      wallet gifts. Version 0.4.0 is read from packages/donate-button-v4/package.json in the
+      monorepo; the package is NOT published to npm (registry.npmjs.org returns 404 for both
+      @everydotorg/donate-button and @every.org/donate-button), so there is no registry metadata
+      endpoint and no registry publish date to record.
+    cdn_versioning_note: >-
+      The distribution URL pins only a major line, /0.4/. A consumer cannot tell which build they
+      are getting: the bundle at that path changed as recently as 2026-08-27 (Last-Modified on
+      the live file) with no version change in the URL. Worse, the version segment is not a real
+      gate — /0.2/, /0.3/, /0.5/, /1.0/ and even /99.9/button.js all return HTTP 200 sharing one
+      identical ETag (a34479b6...), while /0.4/ alone serves a distinct bundle (378746f0...).
+      Only 0.4 is a real version line; every other path silently falls through to a catch-all.
+    probed: '2026-08-28'
+    http_status: 200
+  - name: '@every.org/react-paypal-button-v2'
+    official: true
+    kind: fork
+    is_api_client: false
+    registry: npm
+    registry_url: https://registry.npmjs.org/@every.org/react-paypal-button-v2
+    version: 2.7.0
+    published: '2021-06-17'
+    source_repo: https://github.com/everydotorg/react-paypal-button-v2
+    description: >-
+      A React component for PayPal Checkout Smart Payment Buttons, forked and republished by
+      Every.org under its own npm scope. It wraps PayPal, not the Every.org API, so it does not
+      count as an Every.org SDK. Last published 2021-06-17 — five years stale against an API
+      whose docs were last updated 2026-06-16.
+    official_note: >-
+      Published under the @every.org npm scope, so it is genuinely first-party in the publishing
+      sense; it is scoped as `kind: fork` because the code originates upstream.
+third_party_packages:
+  - name: '@maxnate/provider-everyorg'
+    official: false
+    registry: npm
+    version: 0.1.1
+    published: '2026-04-28'
+    source_repo: https://github.com/maxnate-tz/provider-everyorg
+    description: >-
+      Community Every.org charity donation provider for @maxnate/payments-core. Recorded for
+      completeness; not maintained by Every.org and not counted toward SDK coverage.
+sdk_pointer_withheld: >-
+  No `type: SDKs` pointer is emitted in apis.yml. Every.org publishes no first-party client
+  library for its API, and emitting the pointer would credit it with one.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
