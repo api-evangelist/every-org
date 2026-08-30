@@ -7,6 +7,12 @@ apis:
   - Charities
   - Donations
   - Fundraising
+  - Non-Profit
+  - Philanthropy
+  tags_raw:
+  - Charities
+  - Donations
+  - Fundraising
   - Nonprofits
   - Philanthropy
   humanURL: https://www.every.org
@@ -23,6 +29,14 @@ apis:
     about, facilitate online donations, and promote community engagement.
 name: Every.org
 tags:
+- Charities
+- Donations
+- Fundraising
+- Non-Profit
+- Philanthropy
+- Webhook
+- Giving
+tags_raw:
 - Charities
 - Donations
 - Fundraising
