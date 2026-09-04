@@ -78,7 +78,7 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/every-org.
 access: 3rd-Party
 created: '2025-03-01'
 modified: '2026-08-28'
-position: Consumer
+position: Consuming
 description: Every.org is a platform that empowers individuals to give back and support causes they care
   about. Users can create fundraising campaigns, donate to verified nonprofits, and track their impact
   through personalized giving dashboards. Every.org also partners with companies to facilitate workplace
