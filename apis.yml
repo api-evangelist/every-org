@@ -1,5 +1,8 @@
 aid: every-org
 url: https://raw.githubusercontent.com/api-evangelist/every-org/refs/heads/main/apis.yml
+x-docs-platform: docusaurus
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-10-03
 apis:
 - aid: every-org:every-org
   name: Every.org API
