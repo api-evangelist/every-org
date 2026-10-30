@@ -1,4 +1,4 @@
-# Every.org (every-org)
+# Every.org
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,50 +66,116 @@
 
 Every.org is a platform that empowers individuals to give back and support causes they care about. Users can create fundraising campaigns, donate to verified nonprofits, and track their impact through personalized giving dashboards. Every.org also partners with companies to facilitate workplace giving programs and corporate social responsibility initiatives.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/every-org/refs/heads/main/apis.yml)
+**Areas:** Charities · Donations · Fundraising · Non-Profit · Philanthropy · Webhook · Giving
 
-## Scope
+## Every.org on APIs.io
 
-- **Type:** Index
-- **Position:** Consumer
-- **Access:** 3rd-Party
+Everything profiled for Every.org is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/every-org/](https://apis.io/providers/every-org/)** — or go straight to one of the APIs or properties below.
 
-## Tags:
+### APIs (1)
 
- - Charities, Donations, Fundraising
+- [Every.org API](https://apis.io/apis/every-org/every-org/) — The Every.org API is a powerful tool that allows developers to access and interact with a wide range of charitable giving data. By integrating the API into…
 
-## Timestamps
+### Published properties
 
-- **Created:** 2025-03-01
-- **Modified:** 2026-03-16
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### MCP servers (1)
 
-### Every.org API
-The Every.org API is a powerful tool that allows developers to access and interact with a wide range of charitable giving data. By integrating the API into their applications, developers can retrieve information about nonprofit organizations, fundraising events, and volunteer opportunities. This data can be used to create innovative solutions that connect individuals with causes they care about, facilitate online donations, and promote community engagement.
+Model Context Protocol servers that expose the API to agents.
 
-**Human URL:** [https://www.every.org](https://www.every.org)
+- [every-org-mcp.yml](https://apis.io/servers/every-org/every-org-mcp-yml/)
 
-**Base URL:** https://partners.every.org/v0.2
+#### Security (2)
 
-#### Tags:
+Authentication, trust centre, and vulnerability disclosure.
 
- - Charities, Donations, Fundraising
+- [Every Org Authentication](https://apis.io/security/every-org/every-org-authentication/)
+- [Every Org Domain Security](https://apis.io/security/every-org/every-org-domain-security/)
 
-#### Properties
+#### Plans and pricing (1)
 
-- [Documentation](https://docs.every.org)
-- [Reference](https://partners.every.org)
-- [Website](https://www.every.org)
+Published plans, tiers and prices.
 
-## Common Properties
+- [Every Org Plans Pricing](https://apis.io/plans/every-org/every-org-plans-pricing/)
 
+#### Rate limits (1)
+
+Published request limits.
+
+- [Every Org Rate Limits](https://apis.io/rate-limits/every-org/every-org-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Every Org Finops](https://apis.io/finops/every-org/every-org-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.every.org/)
+- [Getting started](https://docs.every.org/docs/intro)
+- [API reference](https://docs.every.org/docs/endpoints/nonprofits)
+- [Pricing](https://www.every.org/pricing)
+- [Sign up](https://www.every.org/charity-api)
 - [Support](https://support.every.org/hc/en-us)
 - [Blog](https://blog.every.org/)
-- [PressReleases](https://www.every.org/press)
+- [Terms of service](https://www.every.org/terms)
+- [Privacy policy](https://www.every.org/privacy)
+- [GitHub](https://github.com/everydotorg)
+- [Status](https://status.every.org/)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
+**Kin Score 38.9** — thin · rubric 0.24.0 · scored 2026-10-17
 
-**Email:** kin@apievangelist.com
+| Facet | Score |
+|---|---|
+| Discoverability | 67.9 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 65.8 |
+| Developer ergonomics | 59.5 |
+| Access clarity | 43.4 |
+
+**Agent readiness 11.8** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | unknown |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 20.6** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/every-org/](https://apis.io/providers/every-org/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Every.org: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/every-org/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
